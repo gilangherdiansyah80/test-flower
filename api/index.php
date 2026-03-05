@@ -1,20 +1,29 @@
 <?php
 
 /**
- * Laravel on Vercel
- * Serverless entry point - patches vendor files and redirects writable paths to /tmp
+ * Laravel on Vercel - Diagnostic Version
+ * Shows actual errors to help debug deployment issues
  */
 
-// Run PHP 8.2 compatibility patches (only once per cold start)
-$patchLock = '/tmp/.patches_applied';
-if (!file_exists($patchLock)) {
-    require_once __DIR__ . '/../scripts/php82-patch.php';
-    file_put_contents($patchLock, date('Y-m-d H:i:s'));
-}
+// Show ALL errors for debugging
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
 
-// Suppress any remaining PHP 8.2+ deprecation warnings
-error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE);
-ini_set('display_errors', '0');
+// Check if patch script can run (filesystem might be read-only)
+$patchScript = __DIR__ . '/../scripts/php82-patch.php';
+if (file_exists($patchScript)) {
+    // Try to patch, but wrap in try-catch in case filesystem is read-only
+    try {
+        ob_start();
+        require_once $patchScript;
+        $patchOutput = ob_get_clean();
+        // Save patch output for debugging
+        @file_put_contents('/tmp/patch_output.txt', $patchOutput);
+    } catch (\Throwable $e) {
+        // If patching fails (read-only filesystem), log it
+        @file_put_contents('/tmp/patch_error.txt', $e->getMessage());
+    }
+}
 
 // Ensure /tmp/storage directories exist for Laravel's writable needs
 $storageDirs = [
