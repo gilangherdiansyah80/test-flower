@@ -78,6 +78,23 @@
         .detail-poster {
             max-width: 300px;
             margin: 0 auto;
+            display: block;
+        }
+    }
+    @media (max-width: 600px) {
+        .movie-detail {
+            padding: 1.5rem;
+            gap: 1.5rem;
+        }
+        .detail-info h1 {
+            font-size: 2rem;
+        }
+        .detail-meta {
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+        .detail-grid {
+            grid-template-columns: 1fr;
         }
     }
 </style>

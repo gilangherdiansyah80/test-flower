@@ -15,6 +15,8 @@
             align-items: center;
             justify-content: center;
             margin: 0;
+            padding: 0 1.5rem;
+            box-sizing: border-box;
         }
         .login-card {
             background: rgba(255, 255, 255, 0.1);
@@ -25,6 +27,11 @@
             border: 1px solid rgba(255, 255, 255, 0.18);
             width: 100%;
             max-width: 400px;
+        }
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 1.5rem;
+            }
         }
         .login-card h2 {
             text-align: center;

@@ -12,6 +12,8 @@
             font-family: 'Nunito', sans-serif;
             height: 100vh;
             margin: 0;
+            padding: 0 1.5rem;
+            box-sizing: border-box;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -29,6 +31,7 @@
             color: #a0aec0;
             max-width: 600px;
             margin-bottom: 3rem;
+            line-height: 1.6;
         }
         .btn-start {
             display: inline-block;
@@ -45,6 +48,14 @@
         .btn-start:hover {
             background: #5a67d8;
             transform: translateY(-2px);
+        }
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            p {
+                font-size: 1rem;
+            }
         }
     </style>
 </head>

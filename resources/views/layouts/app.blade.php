@@ -30,11 +30,13 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             padding: 1rem 2rem;
             display: flex;
+            flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
             position: sticky;
             top: 0;
             z-index: 1000;
+            gap: 1rem;
         }
         .navbar-brand {
             font-size: 1.8rem;
@@ -49,7 +51,8 @@
         .nav-links {
             display: flex;
             align-items: center;
-            gap: 2rem;
+            gap: 1.5rem;
+            order: 2;
         }
         .nav-links a {
             text-decoration: none;
@@ -207,8 +210,9 @@
         .nav-search {
             flex-grow: 1;
             max-width: 400px;
-            margin: 0 2rem;
+            margin: 0;
             position: relative;
+            order: 1;
         }
         .nav-search-input {
             width: 100%;
@@ -233,6 +237,66 @@
             transform: translateY(-50%);
             color: var(--text-muted);
             font-size: 0.9rem;
+        }
+        .nav-auth {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-left: 1rem;
+            border-left: 1px solid rgba(255,255,255,0.1);
+            padding-left: 1.5rem;
+        }
+        /* Responsive Design */
+        @media (max-width: 991px) {
+            .navbar {
+                padding: 1rem;
+            }
+            .nav-search {
+                order: 3;
+                max-width: 100%;
+                width: 100%;
+                margin-top: 0.5rem;
+            }
+            .nav-links {
+                gap: 1rem;
+            }
+        }
+        @media (max-width: 600px) {
+            .nav-links {
+                width: 100%;
+                order: 4;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                margin-top: 0.5rem;
+                padding-top: 1rem;
+                border-top: 1px solid rgba(255,255,255,0.1);
+            }
+            .nav-auth {
+                border-left: none;
+                margin-left: 0;
+                padding-left: 0;
+            }
+            .movie-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 1rem;
+            }
+            .movie-info {
+                padding: 0.8rem;
+            }
+            .movie-title {
+                font-size: 1rem;
+            }
+            .movie-meta {
+                flex-direction: column;
+                gap: 0.2rem;
+                font-size: 0.8rem;
+            }
+            .container {
+                margin: 1rem auto;
+            }
+            .lang-switch {
+                margin-left: auto;
+            }
         }
         @yield('styles')
     </style>
@@ -261,7 +325,7 @@
                 <a href="{{ route('lang.switch', 'id') }}" class="lang-btn {{ app()->getLocale() == 'id' ? 'active' : '' }}" style="text-decoration:none">ID</a>
             </div>
 
-            <div style="display:flex; align-items:center; gap:1rem; margin-left:1rem; border-left: 1px solid rgba(255,255,255,0.1); padding-left:1.5rem;">
+            <div class="nav-auth">
                 @if(session()->has('user'))
                     <span style="font-size:0.9rem; color:var(--text-muted)">{{ session('user') }}</span>
                     <form action="{{ route('logout') }}" method="POST" style="display:inline">
