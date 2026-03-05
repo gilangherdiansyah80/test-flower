@@ -52,4 +52,18 @@ $app->singleton(
 |
 */
 
+/*
+|--------------------------------------------------------------------------
+| Override Storage Path for Vercel Serverless
+|--------------------------------------------------------------------------
+|
+| Vercel has a read-only filesystem except for /tmp.
+| We override Laravel's storage path to use /tmp/storage.
+|
+*/
+
+if (isset($_ENV['VERCEL']) || getenv('VERCEL')) {
+    $app->useStoragePath('/tmp/storage');
+}
+
 return $app;
