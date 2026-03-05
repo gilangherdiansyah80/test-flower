@@ -2,8 +2,15 @@
 
 /**
  * Laravel on Vercel
- * Serverless entry point - redirects all writable paths to /tmp
+ * Serverless entry point - patches vendor files and redirects writable paths to /tmp
  */
+
+// Run PHP 8.2 compatibility patches (only once per cold start)
+$patchLock = '/tmp/.patches_applied';
+if (!file_exists($patchLock)) {
+    require_once __DIR__ . '/../scripts/php82-patch.php';
+    file_put_contents($patchLock, date('Y-m-d H:i:s'));
+}
 
 // Suppress any remaining PHP 8.2+ deprecation warnings
 error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE);
