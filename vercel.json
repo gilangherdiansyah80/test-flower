@@ -3,7 +3,14 @@
     "builds": [
         {
             "src": "api/index.php",
-            "use": "vercel-php@0.7.1"
+            "use": "vercel-php@0.7.1",
+            "config": {
+                "php.ini": {
+                    "display_errors": "0",
+                    "error_reporting": "24567",
+                    "date.timezone": "Asia/Jakarta"
+                }
+            }
         },
         {
             "src": "public/**",
@@ -23,7 +30,7 @@
     "env": {
         "APP_NAME": "MovieBook",
         "APP_ENV": "production",
-        "APP_DEBUG": "true",
+        "APP_DEBUG": "false",
         "APP_KEY": "base64:g1CFrXMTT+860j/nG4fY7PAs6knhOHgCurtzLydxDlM=",
         "APP_URL": "",
         "LOG_CHANNEL": "stderr",
