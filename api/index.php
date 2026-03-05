@@ -5,6 +5,10 @@
  * Serverless entry point - redirects all writable paths to /tmp
  */
 
+// Suppress PHP 8.2+ deprecation warnings from Laravel 5.8 vendor files
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE & ~E_WARNING);
+ini_set('display_errors', '0');
+
 // Ensure /tmp/storage directories exist for Laravel's writable needs
 $storageDirs = [
     '/tmp/storage',
