@@ -1,29 +1,13 @@
 <?php
 
 /**
- * Laravel on Vercel - Diagnostic Version
- * Shows actual errors to help debug deployment issues
+ * Laravel on Vercel
+ * Serverless entry point
  */
 
-// Show ALL errors for debugging
-error_reporting(E_ALL);
-ini_set('display_errors', '1');
-
-// Check if patch script can run (filesystem might be read-only)
-$patchScript = __DIR__ . '/../scripts/php82-patch.php';
-if (file_exists($patchScript)) {
-    // Try to patch, but wrap in try-catch in case filesystem is read-only
-    try {
-        ob_start();
-        require_once $patchScript;
-        $patchOutput = ob_get_clean();
-        // Save patch output for debugging
-        @file_put_contents('/tmp/patch_output.txt', $patchOutput);
-    } catch (\Throwable $e) {
-        // If patching fails (read-only filesystem), log it
-        @file_put_contents('/tmp/patch_error.txt', $e->getMessage());
-    }
-}
+// Suppress deprecation warnings (belt-and-suspenders with .user.ini)
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE);
+ini_set('display_errors', '0');
 
 // Ensure /tmp/storage directories exist for Laravel's writable needs
 $storageDirs = [
