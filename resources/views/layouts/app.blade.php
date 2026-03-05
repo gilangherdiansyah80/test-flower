@@ -204,6 +204,36 @@
             background: var(--primary);
             color: #fff;
         }
+        .nav-search {
+            flex-grow: 1;
+            max-width: 400px;
+            margin: 0 2rem;
+            position: relative;
+        }
+        .nav-search-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0.6rem 1rem 0.6rem 2.5rem;
+            border-radius: 2rem;
+            color: #fff;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+        .nav-search-input:focus {
+            border-color: var(--primary);
+            background: rgba(30, 41, 59, 0.9);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+        .nav-search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
         @yield('styles')
     </style>
 </head>
@@ -212,8 +242,18 @@
         <a href="{{ route('home') }}" class="navbar-brand">
             <i class="fas fa-play-circle"></i> MOVIEBOOK
         </a>
+
+        @if(Request::is('movies') || Request::is('/'))
+        <div class="nav-search">
+            <i class="fas fa-search nav-search-icon"></i>
+            <form id="global-search-form" action="{{ route('home') }}" method="GET">
+                <input type="text" id="global-search-box" name="s" class="nav-search-input" placeholder="{{ __('Search movies...') }}" value="{{ request('s', '') == 'movie' ? '' : request('s') }}" autocomplete="off">
+            </form>
+        </div>
+        @endif
+
         <div class="nav-links">
-            <a href="{{ route('home') }}" class="{{ Request::is('/') ? 'active' : '' }}">{{ __('Explore') }}</a>
+            <a href="{{ route('home') }}" class="{{ Request::is('/') || Request::is('movies') ? 'active' : '' }}">{{ __('Explore') }}</a>
             <a href="{{ route('favorites.list') }}" class="{{ Request::is('favorites*') ? 'active' : '' }}">{{ __('My Favorites') }}</a>
             
             <div class="lang-switch">
@@ -247,11 +287,25 @@
             }
         });
 
+        // Add a clean way to submit search if not on the home page
+        $('#global-search-form').on('submit', function(e) {
+            if(!window.location.pathname.match(/^\/?(movies)?$/)) {
+                // Let the normal form submission happen
+                return true;
+            }
+            // If on home page, javascript handles it (see index.blade.php)
+        });
+
         function changeLang(lang) {
             window.location.href = "{{ url('/lang') }}/" + lang;
         }
 
         function toggleFavorite(imdbID, Title, Year, Type, Poster, btn) {
+            @if(!session()->has('user'))
+                window.location.href = "{{ route('login') }}";
+                return;
+            @endif
+
             $.post("{{ route('favorites.toggle') }}", {
                 imdbID: imdbID,
                 Title: Title,

@@ -28,14 +28,19 @@ class MovieController extends Controller
 
     public function index(Request $request)
     {
-        $search = $request->get('s', 'Batman'); // Default search
+        $search = $request->get('s', ''); // Form value
         $page = $request->get('page', 1);
+
+        $queryParam = empty($search) ? 'movie' : $search;
+
+        $movies = [];
+        $totalResults = 0;
 
         try {
             $response = $this->client->get('/', [
                 'query' => [
                     'apikey' => $this->apiKey,
-                    's' => $search,
+                    's' => $queryParam,
                     'page' => $page
                 ]
             ]);
@@ -44,7 +49,7 @@ class MovieController extends Controller
             $movies = isset($data['Search']) ? $data['Search'] : [];
             $totalResults = isset($data['totalResults']) ? $data['totalResults'] : 0;
             
-            $favIDs = Favorite::pluck('imdbID')->toArray();
+            $favIDs = Session::has('user') ? Favorite::pluck('imdbID')->toArray() : [];
 
             if ($request->ajax()) {
                 return response()->json([

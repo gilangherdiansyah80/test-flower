@@ -90,7 +90,10 @@
 
     <div class="movie-detail">
         <div class="poster-container">
-            <img src="{{ $movie['Poster'] != 'N/A' ? $movie['Poster'] : 'https://via.placeholder.com/350x525?text=No+Poster' }}" class="detail-poster" alt="{{ $movie['Title'] }}">
+            @php
+                $highResPoster = $movie['Poster'] != 'N/A' ? str_replace('SX300.jpg', 'SX1000.jpg', $movie['Poster']) : 'https://via.placeholder.com/500x750?text=No+Poster';
+            @endphp
+            <img src="{{ $highResPoster }}" class="detail-poster" alt="{{ $movie['Title'] }}">
             
             <div style="margin-top:2rem">
                 <button class="btn btn-primary {{ $isFavorite ? 'active' : '' }}" style="width:100%; justify-content:center"

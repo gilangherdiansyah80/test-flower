@@ -3,36 +3,6 @@
 @section('title', 'Explore Movies')
 
 @section('styles')
-<style>
-    .search-container {
-        max-width: 600px;
-        margin: 0 auto 3rem;
-        position: relative;
-    }
-    .search-input {
-        width: 100%;
-        background: var(--card-bg);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        padding: 1.2rem 1.5rem 1.2rem 3.5rem;
-        border-radius: 1.2rem;
-        color: #fff;
-        font-size: 1.1rem;
-        outline: none;
-        transition: all 0.3s;
-    }
-    .search-input:focus {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
-        background: rgba(30, 41, 59, 0.9);
-    }
-    .search-icon {
-        position: absolute;
-        left: 1.5rem;
-        top: 50%;
-        transform: translateY(-50%);
-        color: var(--text-muted);
-        font-size: 1.2rem;
-    }
     .loading-spinner {
         text-align: center;
         padding: 2rem;
@@ -53,17 +23,9 @@
         display: block;
         opacity: 0.5;
     }
-</style>
 @endsection
 
 @section('content')
-    <div class="search-container">
-        <i class="fas fa-search search-icon"></i>
-        <form id="search-form">
-            <input type="text" id="search-box" class="search-input" placeholder="{{ __('Search for movies, series...') }}" value="{{ $search }}" autocomplete="off">
-        </form>
-    </div>
-
     <div id="movie-list" class="movie-grid">
         @forelse($movies as $movie)
             <div class="movie-card">
@@ -103,7 +65,7 @@
     let page = 1;
     let loading = false;
     let hasMore = true;
-    let search = '{{ $search }}';
+    let search = $('#global-search-box').val() || '';
     let favIDs = @json($favIDs);
 
     $(window).scroll(function() {
@@ -114,9 +76,9 @@
         }
     });
 
-    $('#search-form').submit(function(e) {
+    $('#global-search-form').submit(function(e) {
         e.preventDefault();
-        search = $('#search-box').val();
+        search = $('#global-search-box').val();
         if (search.length < 3) return;
         
         page = 1;

@@ -21,7 +21,7 @@ Route::get('/', function () {
 
 Route::middleware(['web'])->group(function () {
     Route::get('/movies', 'MovieController@index')->name('home');
-    Route::get('/movies/detail/{id}', 'MovieController@show')->name('movies.show');
+    Route::get('/movies/{id}', 'MovieController@show')->name('movies.show');
     Route::post('/favorites/toggle', 'MovieController@toggleFavorite')->name('favorites.toggle');
     Route::get('/favorites', 'MovieController@favorites')->name('favorites.list');
     
