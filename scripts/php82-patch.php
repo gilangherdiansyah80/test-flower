@@ -40,6 +40,9 @@ $containerFile = $basePath . '/Container/Container.php';
 if (file_exists($containerFile)) {
     $content = file_get_contents($containerFile);
     
+    // Make idempotent by removing existing attributes
+    $content = preg_replace('/#\[\\\\ReturnTypeWillChange\]\s+/', '', $content);
+    
     // offsetExists
     $content = preg_replace(
         '/(\s+)public function offsetExists\(\$key\)/',
@@ -68,10 +71,10 @@ if (file_exists($containerFile)) {
     // Remove duplicate attributes if already patched
     $content = str_replace("#[\\ReturnTypeWillChange]\n    #[\\ReturnTypeWillChange]", "#[\\ReturnTypeWillChange]", $content);
     
-    // Fix getClass() -> getType() in resolveClass method
-    $content = str_replace(
-        '$parameter->getClass()',
-        '($parameter->getType() && !$parameter->getType()->isBuiltin() ? new \ReflectionClass($parameter->getType()->getName()) : null)',
+    // Fix getClass() -> getType() in resolveClass method ($parameter and $dependency)
+    $content = preg_replace(
+        '/\$(\w+)->getClass\(\)/',
+        '(\$$1->getType() && !\$$1->getType()->isBuiltin() ? new \ReflectionClass(\$$1->getType()->getName()) : null)',
         $content
     );
     
@@ -183,6 +186,9 @@ $requestFile = $basePath . '/Http/Request.php';
 if (file_exists($requestFile)) {
     $content = file_get_contents($requestFile);
     
+    // Make idempotent
+    $content = preg_replace('/#\[\\\\ReturnTypeWillChange\]\s+/', '', $content);
+    
     // Add #[\ReturnTypeWillChange] to offsetExists, offsetGet, offsetSet, offsetUnset
     $content = preg_replace(
         '/(\s+)public function offsetExists\(\$offset\)/',
@@ -220,6 +226,9 @@ $messageBagFile = $basePath . '/Support/MessageBag.php';
 if (file_exists($messageBagFile)) {
     $content = file_get_contents($messageBagFile);
     
+    // Make idempotent
+    $content = preg_replace('/#\[\\\\ReturnTypeWillChange\]\s+/', '', $content);
+    
     $content = preg_replace(
         '/(\s+)public function count\(\)/',
         '$1#[\ReturnTypeWillChange]' . "\n" . '$1public function count()',
@@ -230,7 +239,6 @@ if (file_exists($messageBagFile)) {
         '$1#[\ReturnTypeWillChange]' . "\n" . '$1public function jsonSerialize()',
         $content
     );
-    $content = str_replace("#[\\ReturnTypeWillChange]\n    #[\\ReturnTypeWillChange]", "#[\\ReturnTypeWillChange]", $content);
     
     file_put_contents($messageBagFile, $content);
     $patchCount++;
@@ -244,6 +252,9 @@ $routeCollectionFile = $basePath . '/Routing/RouteCollection.php';
 if (file_exists($routeCollectionFile)) {
     $content = file_get_contents($routeCollectionFile);
     
+    // Make idempotent
+    $content = preg_replace('/#\[\\\\ReturnTypeWillChange\]\s+/', '', $content);
+    
     $content = preg_replace(
         '/(\s+)public function getIterator\(\)/',
         '$1#[\ReturnTypeWillChange]' . "\n" . '$1public function getIterator()',
@@ -254,7 +265,6 @@ if (file_exists($routeCollectionFile)) {
         '$1#[\ReturnTypeWillChange]' . "\n" . '$1public function count()',
         $content
     );
-    $content = str_replace("#[\\ReturnTypeWillChange]\n    #[\\ReturnTypeWillChange]", "#[\\ReturnTypeWillChange]", $content);
     
     file_put_contents($routeCollectionFile, $content);
     $patchCount++;
@@ -298,7 +308,7 @@ if (file_exists($routeDepFile)) {
 // ============================================================
 $implicitFile = $basePath . '/Routing/ImplicitRouteBinding.php';
 if (file_exists($implicitFile)) {
-    $content = file_get_contents($routeDepFile);
+    $content = file_get_contents($implicitFile);
     $content = str_replace(
         '$parameter->getClass()',
         '($parameter->getType() && !$parameter->getType()->isBuiltin() ? new \ReflectionClass($parameter->getType()->getName()) : null)',
@@ -364,6 +374,9 @@ $configRepoFile = $basePath . '/Config/Repository.php';
 if (file_exists($configRepoFile)) {
     $content = file_get_contents($configRepoFile);
     
+    // Make idempotent
+    $content = preg_replace('/#\[\\\\ReturnTypeWillChange\]\s+/', '', $content);
+    
     $content = preg_replace(
         '/(\s+)public function offsetExists\(\$key\)/',
         '$1#[\ReturnTypeWillChange]' . "\n" . '$1public function offsetExists($key)',
@@ -384,7 +397,6 @@ if (file_exists($configRepoFile)) {
         '$1#[\ReturnTypeWillChange]' . "\n" . '$1public function offsetUnset($key)',
         $content
     );
-    $content = str_replace("#[\\ReturnTypeWillChange]\n    #[\\ReturnTypeWillChange]", "#[\\ReturnTypeWillChange]", $content);
     
     file_put_contents($configRepoFile, $content);
     $patchCount++;
@@ -403,6 +415,9 @@ $sessionFiles = array_unique($sessionFiles);
 foreach ($sessionFiles as $sessionFile) {
     if (file_exists($sessionFile)) {
         $content = file_get_contents($sessionFile);
+        
+        // Make idempotent
+        $content = preg_replace('/#\[\\\\ReturnTypeWillChange\]\s+/', '', $content);
         $modified = false;
         
         foreach (['open', 'close', 'read', 'write', 'destroy', 'gc'] as $method) {
@@ -445,6 +460,61 @@ if (file_exists($opisFile)) {
         file_put_contents($opisFile, $content);
         $patchCount++;
         echo "  PATCHED: SerializableClosure.php\n";
+    }
+}
+
+// ============================================================
+// 17. Support Classes - Add #[\ReturnTypeWillChange] to ArrayAccess
+// ============================================================
+$supportFiles = [
+    $basePath . '/Support/Collection.php',
+    $basePath . '/Support/Fluent.php',
+    $basePath . '/Support/Optional.php',
+];
+
+foreach ($supportFiles as $file) {
+    if (file_exists($file)) {
+        $content = file_get_contents($file);
+        
+        // Make idempotent
+        $content = preg_replace('/#\[\\\\ReturnTypeWillChange\]\s+/', '', $content);
+        $modified = false;
+        
+        $methods = ['offsetExists', 'offsetGet', 'offsetSet', 'offsetUnset'];
+        foreach ($methods as $method) {
+            if (preg_match('/(\s+)public function ' . $method . '\(/', $content)) {
+                $content = preg_replace(
+                    '/(\s+)public function ' . $method . '\(/',
+                    '$1#[\ReturnTypeWillChange]' . "\n" . '$1public function ' . $method . '(',
+                    $content
+                );
+                $modified = true;
+            }
+        }
+        
+        if ($modified) {
+            file_put_contents($file, $content);
+            $patchCount++;
+            echo "  PATCHED: " . basename($file) . "\n";
+        }
+    }
+}
+
+// ============================================================
+// 18. HandleExceptions.php - Prevent E_DEPRECATED from crashing Laravel
+// ============================================================
+$handleExceptionsFile = $basePath . '/Foundation/Bootstrap/HandleExceptions.php';
+if (file_exists($handleExceptionsFile)) {
+    $content = file_get_contents($handleExceptionsFile);
+    if (strpos($content, 'E_DEPRECATED || $level === E_USER_DEPRECATED') === false) {
+        $content = preg_replace(
+            '/(\s+)public function handleError\(\$level, \$message, \$file = \'\', \$line = 0, \$context = \[\]\)\n\s+\{/',
+            "$0\n        if (\$level === E_DEPRECATED || \$level === E_USER_DEPRECATED || \$level === E_NOTICE || \$level === E_USER_NOTICE) { return; }\n",
+            $content
+        );
+        file_put_contents($handleExceptionsFile, $content);
+        $patchCount++;
+        echo "  PATCHED: HandleExceptions.php\n";
     }
 }
 
