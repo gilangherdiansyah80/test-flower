@@ -14,7 +14,7 @@ class MovieController extends Controller
 
     public function __construct()
     {
-        $this->client = new Client(['base_uri' => 'http://www.omdbapi.com/']);
+        $this->client = new Client(['base_uri' => 'https://www.omdbapi.com/']);
         $this->apiKey = env('OMDB_API_KEY', '699b04d5');
 
         // Simple middleware-like check, excluding the index method
@@ -46,6 +46,12 @@ class MovieController extends Controller
             ]);
 
             $data = json_decode($response->getBody()->getContents(), true);
+
+            // Explicitly handle OMDB API errors
+            if (isset($data['Response']) && $data['Response'] === 'False') {
+                throw new \Exception($data['Error'] ?? 'Unknown API Error');
+            }
+
             $movies = isset($data['Search']) ? $data['Search'] : [];
             $totalResults = isset($data['totalResults']) ? $data['totalResults'] : 0;
             
