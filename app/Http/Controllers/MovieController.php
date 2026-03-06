@@ -45,7 +45,12 @@ class MovieController extends Controller
                 ]
             ]);
 
-            $data = json_decode($response->getBody()->getContents(), true);
+            $rawBody = $response->getBody()->getContents();
+            $data = json_decode($rawBody, true);
+
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                throw new \Exception('Invalid JSON response from OMDB API. Body: ' . substr($rawBody, 0, 100));
+            }
 
             // Explicitly handle OMDB API errors
             if (isset($data['Response']) && $data['Response'] === 'False') {
@@ -53,6 +58,12 @@ class MovieController extends Controller
             }
 
             $movies = isset($data['Search']) ? $data['Search'] : [];
+            
+            // If we are searching for the default 'movie' and get nothing, something is wrong with the API/Key
+            if (empty($movies) && $queryParam === 'movie') {
+                 throw new \Exception('API connected but returned no results for default search. Check if API Key is correct/active.');
+            }
+
             $totalResults = isset($data['totalResults']) ? $data['totalResults'] : 0;
             
             $favIDs = Session::has('user') ? Favorite::pluck('imdbID')->toArray() : [];
