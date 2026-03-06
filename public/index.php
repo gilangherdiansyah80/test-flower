@@ -1,5 +1,21 @@
 <?php
 
+// SILENCE THE NOISE - Crucial for Laravel 5.8 on PHP 8.2 (Railway/Vercel)
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE & ~E_USER_DEPRECATED & ~E_USER_NOTICE);
+ini_set('display_errors', '0');
+
+set_error_handler(function ($errno, $errstr, $errfile, $errline) {
+    $ignored = [E_DEPRECATED, E_USER_DEPRECATED, E_NOTICE, E_USER_NOTICE];
+    if (in_array($errno, $ignored)) return true;
+    return false;
+});
+
+// Apply patches if they exist
+if (file_exists(__DIR__.'/../scripts/php82-patch.php')) {
+    @include __DIR__.'/../scripts/php82-patch.php';
+}
+
+
 /**
  * Laravel - A PHP Framework For Web Artisans
  *
