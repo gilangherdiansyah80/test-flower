@@ -9,28 +9,35 @@
  * Run via: php scripts/php82-patch.php
  */
 
-echo "Applying PHP 8.2 compatibility patches...\n";
-
 $basePath = dirname(__DIR__) . '/vendor/laravel/framework/src/Illuminate';
 $patchCount = 0;
+$isVercel = isset($_ENV['VERCEL']) || getenv('VERCEL');
 
 // Helper function to patch a file
 function patchFile($filePath, $search, $replace) {
-    global $patchCount;
+    global $patchCount, $isVercel;
     if (!file_exists($filePath)) {
-        echo "  SKIP: $filePath (not found)\n";
         return false;
     }
+    
+    // On Vercel at runtime, the filesystem is read-only. 
+    // We skip patching if we can't write, to avoid warnings/500 errors.
+    if (!is_writable($filePath)) {
+        return false;
+    }
+
     $content = file_get_contents($filePath);
     if (strpos($content, $search) !== false) {
         $content = str_replace($search, $replace, $content);
         file_put_contents($filePath, $content);
         $patchCount++;
-        echo "  PATCHED: " . basename($filePath) . "\n";
         return true;
     }
-    echo "  OK: " . basename($filePath) . " (already patched or not needed)\n";
     return false;
+}
+
+if (!$isVercel) {
+    echo "Applying PHP 8.2 compatibility patches...\n";
 }
 
 // ============================================================
