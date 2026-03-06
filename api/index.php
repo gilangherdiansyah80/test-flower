@@ -54,10 +54,15 @@ try {
         $isPatched = strpos(file_get_contents($containerRef->getFileName()), 'ReturnTypeWillChange') !== false;
 
         if (!$isPatched) {
-            // Include patch script silently (the script now has its own writability checks)
+            // Buffer everything to be 100% sure nothing leaks to output
+            ob_start();
             @include __DIR__ . '/../scripts/php82-patch.php';
+            ob_end_clean();
         }
     }
+    
+    echo "<!-- Deployment Version: 1.1 -->";
+
 
     // Ensure APP_KEY
     if (!getenv('APP_KEY')) {

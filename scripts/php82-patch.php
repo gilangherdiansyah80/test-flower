@@ -87,7 +87,7 @@ if (file_exists($containerFile)) {
     
     file_put_contents($containerFile, $content);
     $patchCount++;
-    echo "  PATCHED: Container.php\n";
+
 }
 
 // ============================================================
@@ -103,7 +103,7 @@ if (file_exists($boundMethodFile)) {
     );
     file_put_contents($boundMethodFile, $content);
     $patchCount++;
-    echo "  PATCHED: BoundMethod.php\n";
+
 }
 
 // ============================================================
@@ -174,7 +174,7 @@ if (file_exists($strFile)) {
     
     file_put_contents($strFile, $content);
     $patchCount++;
-    echo "  PATCHED: Str.php\n";
+
 }
 
 // ============================================================
@@ -223,7 +223,7 @@ if (file_exists($requestFile)) {
     
     file_put_contents($requestFile, $content);
     $patchCount++;
-    echo "  PATCHED: Request.php\n";
+
 }
 
 // ============================================================
@@ -249,7 +249,7 @@ if (file_exists($messageBagFile)) {
     
     file_put_contents($messageBagFile, $content);
     $patchCount++;
-    echo "  PATCHED: MessageBag.php\n";
+
 }
 
 // ============================================================
@@ -275,7 +275,7 @@ if (file_exists($routeCollectionFile)) {
     
     file_put_contents($routeCollectionFile, $content);
     $patchCount++;
-    echo "  PATCHED: RouteCollection.php\n";
+
 }
 
 // ============================================================
@@ -291,7 +291,7 @@ if (file_exists($routeSigFile)) {
     );
     file_put_contents($routeSigFile, $content);
     $patchCount++;
-    echo "  PATCHED: RouteSignatureParameters.php\n";
+
 }
 
 // ============================================================
@@ -307,7 +307,7 @@ if (file_exists($routeDepFile)) {
     );
     file_put_contents($routeDepFile, $content);
     $patchCount++;
-    echo "  PATCHED: RouteDependencyResolverTrait.php\n";
+
 }
 
 // ============================================================
@@ -323,7 +323,7 @@ if (file_exists($implicitFile)) {
     );
     file_put_contents($implicitFile, $content);
     $patchCount++;
-    echo "  PATCHED: ImplicitRouteBinding.php\n";
+
 }
 
 // ============================================================
@@ -339,7 +339,7 @@ if (file_exists($discoverFile)) {
     );
     file_put_contents($discoverFile, $content);
     $patchCount++;
-    echo "  PATCHED: DiscoverEvents.php\n";
+
 }
 
 // ============================================================
@@ -355,7 +355,7 @@ if (file_exists($broadcasterFile)) {
     );
     file_put_contents($broadcasterFile, $content);
     $patchCount++;
-    echo "  PATCHED: Broadcaster.php\n";
+
 }
 
 // ============================================================
@@ -371,7 +371,7 @@ if (file_exists($gateFile)) {
     );
     file_put_contents($gateFile, $content);
     $patchCount++;
-    echo "  PATCHED: Gate.php\n";
+
 }
 
 // ============================================================
@@ -407,7 +407,7 @@ if (file_exists($configRepoFile)) {
     
     file_put_contents($configRepoFile, $content);
     $patchCount++;
-    echo "  PATCHED: Repository.php\n";
+
 }
 
 // ============================================================
@@ -442,7 +442,7 @@ foreach ($sessionFiles as $sessionFile) {
             $content = str_replace("#[\\ReturnTypeWillChange]\n    #[\\ReturnTypeWillChange]", "#[\\ReturnTypeWillChange]", $content);
             file_put_contents($sessionFile, $content);
             $patchCount++;
-            echo "  PATCHED: " . basename($sessionFile) . "\n";
+
         }
     }
 }
@@ -466,7 +466,7 @@ if (file_exists($opisFile)) {
         );
         file_put_contents($opisFile, $content);
         $patchCount++;
-        echo "  PATCHED: SerializableClosure.php\n";
+
     }
 }
 
@@ -502,7 +502,7 @@ foreach ($supportFiles as $file) {
         if ($modified) {
             file_put_contents($file, $content);
             $patchCount++;
-            echo "  PATCHED: " . basename($file) . "\n";
+
         }
     }
 }
@@ -521,8 +521,8 @@ if (file_exists($handleExceptionsFile)) {
         );
         file_put_contents($handleExceptionsFile, $content);
         $patchCount++;
-        echo "  PATCHED: HandleExceptions.php\n";
+
     }
 }
 
-echo "\nDone! Applied $patchCount patches.\n";
+
