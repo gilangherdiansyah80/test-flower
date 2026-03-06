@@ -1,0 +1,6 @@
+[variables]
+    PHP_VERSION = '8.2.0'
+    NIXPACKS_PHP_VERSION = '8.2.0'
+
+[phases.setup]
+    nixPkgs = ['...', 'php82']
