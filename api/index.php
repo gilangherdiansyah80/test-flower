@@ -44,30 +44,37 @@ try {
     // Check and require vendor autoloader
     $autoloadPath = __DIR__ . '/../vendor/autoload.php';
     if (!file_exists($autoloadPath)) {
-        throw new Exception("Vendor autoload not found at: " . $autoloadPath . ". Current directory: " . getcwd());
+        throw new Exception("Vendor autoload not found.");
     }
     require $autoloadPath;
 
-    // Check if patches are applied (check Container.php via reflection to find its path)
+    // Check if patches are applied
     if (class_exists('Illuminate\Container\Container')) {
         $containerRef = new ReflectionClass('Illuminate\Container\Container');
-        $containerFilePath = $containerRef->getFileName();
-        $isPatched = strpos(file_get_contents($containerFilePath), 'ReturnTypeWillChange') !== false;
+        $isPatched = strpos(file_get_contents($containerRef->getFileName()), 'ReturnTypeWillChange') !== false;
 
         if (!$isPatched) {
-            // Attempt to run patch script if not patched (might be read-only, but worth a try)
-            // or we might need to find another way if Vercel build environment doesn't allow this.
-            @include __DIR__ . '/../scripts/php82-patch.php';
+            // Silence patch output to prevent "headers already sent"
+            ob_start();
+            include __DIR__ . '/../scripts/php82-patch.php';
+            ob_end_clean();
         }
     }
 
-    // Forward to Laravel's actual entry point (which also requires the autoloader, but that's fine)
+    // Force environment variables for Vercel
+    if (!getenv('APP_KEY')) {
+        putenv('APP_KEY=base64:g1CFrXMTT+860j/nG4fY7PAs6knhOHgCurtzLydxDlM=');
+    }
+
+    $_SERVER['SCRIPT_NAME'] = '/index.php';
+
     require __DIR__ . '/../public/index.php';
 } catch (Throwable $e) {
-
+    ob_get_clean(); // Clear any partial output
     echo "<h1>Deployment Error</h1>";
     echo "<p><b>Message:</b> " . $e->getMessage() . "</p>";
     echo "<p><b>File:</b> " . $e->getFile() . ":" . $e->getLine() . "</p>";
     echo "<pre>" . $e->getTraceAsString() . "</pre>";
 }
+
 
