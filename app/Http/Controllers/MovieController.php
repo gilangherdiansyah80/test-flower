@@ -66,7 +66,14 @@ class MovieController extends Controller
 
             $totalResults = isset($data['totalResults']) ? $data['totalResults'] : 0;
             
-            $favIDs = Session::has('user') ? Favorite::pluck('imdbID')->toArray() : [];
+            $favIDs = [];
+            try {
+                if (Session::has('user')) {
+                    $favIDs = Favorite::pluck('imdbID')->toArray();
+                }
+            } catch (\Exception $dbEx) {
+                // Silently fail or log for favorites, don't crash the whole page
+            }
 
             if ($request->ajax()) {
                 return response()->json([
