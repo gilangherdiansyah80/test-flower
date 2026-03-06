@@ -78,11 +78,17 @@ class MovieController extends Controller
 
             return view('movies.index', compact('movies', 'totalResults', 'search', 'favIDs'));
         } catch (\Exception $e) {
+            $errorMessage = 'Ready to start? Error loading data: ' . $e->getMessage();
+            
+            if ($request->ajax()) {
+                return response()->json(['error' => $errorMessage], 500);
+            }
+
+            session()->flash('error', $errorMessage);
             $movies = [];
             $totalResults = 0;
             $favIDs = [];
-            return view('movies.index', compact('movies', 'totalResults', 'search', 'favIDs'))
-                   ->with('error', 'Ready to start? Error loading data: ' . $e->getMessage());
+            return view('movies.index', compact('movies', 'totalResults', 'search', 'favIDs'));
         }
     }
 

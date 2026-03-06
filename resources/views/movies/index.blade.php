@@ -108,6 +108,11 @@
                     $('#movie-list').html('<div class="no-results" style="grid-column: 1/-1"><i class="fas fa-film"></i><h3>No movies found</h3><p>Try searching for something else</p></div>');
                 }
             }
+        }).fail(function(xhr) {
+            loading = false;
+            $('#loading').hide();
+            const message = xhr.responseJSON && xhr.responseJSON.error ? xhr.responseJSON.error : 'Failed to load movies.';
+            alert(message);
         });
     }
 
