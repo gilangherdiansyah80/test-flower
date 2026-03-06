@@ -61,7 +61,11 @@ class MovieController extends Controller
 
             return view('movies.index', compact('movies', 'totalResults', 'search', 'favIDs'));
         } catch (\Exception $e) {
-            return back()->with('error', 'Failed to fetch movies.');
+            $movies = [];
+            $totalResults = 0;
+            $favIDs = [];
+            return view('movies.index', compact('movies', 'totalResults', 'search', 'favIDs'))
+                   ->with('error', 'Ready to start? Error loading data: ' . $e->getMessage());
         }
     }
 
