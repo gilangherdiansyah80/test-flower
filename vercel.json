@@ -6,8 +6,8 @@
             "use": "vercel-php@0.7.1",
             "config": {
                 "php.ini": {
-                    "display_errors": "1",
-                    "error_reporting": "E_ALL",
+                    "display_errors": "0",
+                    "error_reporting": "22517",
                     "date.timezone": "Asia/Jakarta"
                 }
             }
