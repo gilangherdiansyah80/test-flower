@@ -36,9 +36,8 @@ function patchFile($filePath, $search, $replace) {
     return false;
 }
 
-if (!$isVercel) {
-    echo "Applying PHP 8.2 compatibility patches...\n";
-}
+// Silenced for web requests to prevent header issues
+
 
 // ============================================================
 // 1. Container.php - Add #[\ReturnTypeWillChange] to ArrayAccess methods
