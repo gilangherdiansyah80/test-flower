@@ -61,10 +61,8 @@ try {
         }
     }
     
-    echo "<!-- Deployment Version: 1.1 -->";
-
-
     // Ensure APP_KEY
+
     if (!getenv('APP_KEY')) {
         putenv('APP_KEY=base64:g1CFrXMTT+860j/nG4fY7PAs6knhOHgCurtzLydxDlM=');
         $_ENV['APP_KEY'] = 'base64:g1CFrXMTT+860j/nG4fY7PAs6knhOHgCurtzLydxDlM=';
