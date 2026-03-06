@@ -50,6 +50,7 @@
     "prefer-stable": true,
     "scripts": {
         "post-autoload-dump": [
+            "@php scripts/php82-patch.php",
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"
         ],
