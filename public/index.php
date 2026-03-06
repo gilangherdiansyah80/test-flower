@@ -23,6 +23,12 @@ if (file_exists(__DIR__.'/../scripts/php82-patch.php')) {
  * @author   Taylor Otwell <taylor@laravel.com>
  */
 
+// AUTO-PREPARE DATABASE (Railway resilience)
+$dbPath = __DIR__.'/../database/database.sqlite';
+if (!file_exists($dbPath)) {
+    @file_put_contents($dbPath, '');
+}
+
 define('LARAVEL_START', microtime(true));
 
 /*

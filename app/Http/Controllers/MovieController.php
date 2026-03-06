@@ -15,7 +15,7 @@ class MovieController extends Controller
     public function __construct()
     {
         $this->client = new Client(['base_uri' => 'http://www.omdbapi.com/']);
-        $this->apiKey = env('OMDB_API_KEY');
+        $this->apiKey = env('OMDB_API_KEY', '699b04d5');
 
         // Simple middleware-like check, excluding the index method
         $this->middleware(function ($request, $next) {
