@@ -246,38 +246,68 @@
             border-left: 1px solid rgba(255,255,255,0.1);
             padding-left: 1.5rem;
         }
+        .user-name {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        .login-link {
+            padding: 0.4rem 1.2rem;
+            border-radius: 0.5rem;
+            font-size: 0.9rem;
+        }
         /* Responsive Design */
-        @media (max-width: 991px) {
+        @media (max-width: 1150px) {
             .navbar {
-                padding: 1rem;
+                padding: 1rem 1.5rem;
             }
             .nav-search {
                 order: 3;
                 max-width: 100%;
                 width: 100%;
-                margin-top: 0.5rem;
+                margin: 0.5rem 0 0 0;
             }
             .nav-links {
                 gap: 1rem;
             }
         }
+        @media (max-width: 900px) {
+            .nav-links span, .nav-auth span, .user-name {
+                display: none;
+            }
+            .nav-links {
+                gap: 1.2rem;
+            }
+            .nav-auth {
+                margin-left: 0.5rem;
+                padding-left: 1rem;
+            }
+            .logout-btn, .login-link {
+                padding: 0.5rem;
+                width: 35px;
+                height: 35px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+        }
         @media (max-width: 600px) {
+            .navbar-brand {
+                font-size: 1.4rem;
+            }
             .nav-links {
                 width: 100%;
                 order: 4;
                 justify-content: space-between;
-                flex-wrap: wrap;
-                margin-top: 0.5rem;
                 padding-top: 1rem;
                 border-top: 1px solid rgba(255,255,255,0.1);
+                margin-top: 0.5rem;
             }
             .nav-auth {
                 border-left: none;
-                margin-left: 0;
                 padding-left: 0;
             }
             .movie-grid {
-                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
                 gap: 1rem;
             }
             .movie-info {
@@ -293,9 +323,6 @@
             }
             .container {
                 margin: 1rem auto;
-            }
-            .lang-switch {
-                margin-left: auto;
             }
         }
         @yield('styles')
@@ -317,8 +344,12 @@
         @endif
 
         <div class="nav-links">
-            <a href="{{ route('home') }}" class="{{ Request::is('/') || Request::is('movies') ? 'active' : '' }}">{{ __('Explore') }}</a>
-            <a href="{{ route('favorites.list') }}" class="{{ Request::is('favorites*') ? 'active' : '' }}">{{ __('My Favorites') }}</a>
+            <a href="{{ route('home') }}" class="{{ Request::is('/') || Request::is('movies') ? 'active' : '' }}">
+                <i class="fas fa-compass"></i> <span>{{ __('Explore') }}</span>
+            </a>
+            <a href="{{ route('favorites.list') }}" class="{{ Request::is('favorites*') ? 'active' : '' }}">
+                <i class="fas fa-heart"></i> <span>{{ __('My Favorites') }}</span>
+            </a>
             
             <div class="lang-switch">
                 <a href="{{ route('lang.switch', 'en') }}" class="lang-btn {{ app()->getLocale() == 'en' ? 'active' : '' }}" style="text-decoration:none">EN</a>
@@ -327,13 +358,17 @@
 
             <div class="nav-auth">
                 @if(session()->has('user'))
-                    <span style="font-size:0.9rem; color:var(--text-muted)">{{ session('user') }}</span>
+                    <span class="user-name">{{ session('user') }}</span>
                     <form action="{{ route('logout') }}" method="POST" style="display:inline">
                         @csrf
-                        <button type="submit" class="logout-btn">{{ __('Logout') }}</button>
+                        <button type="submit" class="logout-btn">
+                            <i class="fas fa-sign-out-alt"></i> <span>{{ __('Logout') }}</span>
+                        </button>
                     </form>
                 @else
-                    <a href="{{ route('login') }}" class="btn btn-outline" style="padding: 0.4rem 1.2rem; border-radius: 0.5rem; font-size: 0.9rem;">{{ __('Login') }}</a>
+                    <a href="{{ route('login') }}" class="btn btn-outline login-link">
+                        <i class="fas fa-user"></i> <span>{{ __('Login') }}</span>
+                    </a>
                 @endif
             </div>
         </div>
