@@ -23,6 +23,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        // Force database configuration at runtime to bypass any Railway/Env overrides or cache
+        config([
+            'database.default' => 'sqlite',
+            'database.connections.sqlite.database' => database_path('database.sqlite'),
+        ]);
+
         if (env('APP_ENV') !== 'local') {
             \URL::forceScheme('https');
         }
